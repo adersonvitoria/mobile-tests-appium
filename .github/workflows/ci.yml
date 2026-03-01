@@ -68,7 +68,7 @@ jobs:
           script: |
             adb wait-for-device
             sleep 10
-            npx appium driver install uiautomator2
+            npx appium driver install uiautomator2 || npx appium driver update uiautomator2 || true
             npx wdio run wdio.conf.ts || true
 
       - name: Gerar Allure Report
