@@ -7,8 +7,13 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
   pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
   mobile-tests:
@@ -83,16 +88,35 @@ jobs:
           path: allure-report/
           retention-days: 30
 
-      - name: Publicar Allure Report no GitHub Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v4
+  deploy-report:
+    needs: [mobile-tests]
+    if: always() && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Download Allure Report
+        uses: actions/download-artifact@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
-          destination_dir: allure-report
+          name: allure-report
+          path: allure-report/
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report/
+
+      - name: Deploy no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 
   summary:
-    needs: [mobile-tests]
+    needs: [mobile-tests, deploy-report]
     runs-on: ubuntu-latest
     if: always()
 
@@ -104,5 +128,6 @@ jobs:
           echo "| Componente | Status | Ferramenta |" >> $GITHUB_STEP_SUMMARY
           echo "|------------|--------|------------|" >> $GITHUB_STEP_SUMMARY
           echo "| Testes Mobile | ${{ needs.mobile-tests.result }} | Appium + WebdriverIO |" >> $GITHUB_STEP_SUMMARY
+          echo "| Allure Report | ${{ needs.deploy-report.result }} | GitHub Pages |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "> **Allure Report:** https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report/" >> $GITHUB_STEP_SUMMARY
+          echo "> **Allure Report:** https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
