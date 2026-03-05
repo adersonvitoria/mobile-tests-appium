@@ -26,7 +26,7 @@ describe('Tarefa 1: Login, Navegação e Validação', () => {
             expect(await LoginScreen.isSuccessDialogDisplayed()).toBe(true);
 
             const message = await LoginScreen.getDialogMessage();
-            expect(message).toContain('FALHA FORÇADA PARA TESTAR PIPELINE');
+            expect(message).toContain('logged in');
 
             await LoginScreen.dismissSuccessDialog();
         });
