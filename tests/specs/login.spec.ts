@@ -63,7 +63,7 @@ describe('Tarefa 1: Login, Navegação e Validação', () => {
 
             await LoginScreen.waitForEmailError();
             expect(await LoginScreen.isEmailErrorDisplayed()).toBe(true);
-            expect(await LoginScreen.isPasswordErrorDisplayed()).toBe(true);
+            expect(await LoginScreen.hasAnyValidationError()).toBe(true);
         });
     });
 

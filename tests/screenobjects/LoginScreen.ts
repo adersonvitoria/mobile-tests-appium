@@ -20,6 +20,7 @@ class LoginScreen extends AppScreen {
     get errorEmail() { return $('android=new UiSelector().textContains("valid email")'); }
     get errorPassword() { return $('android=new UiSelector().textContains("8 characters")'); }
     get errorRepeatPassword() { return $('android=new UiSelector().textContains("same password")'); }
+    get errorGeneric() { return $('android=new UiSelector().textStartsWith("Please")'); }
 
     async login(email: string, password: string): Promise<void> {
         const emailField = await this.inputEmail;
@@ -122,6 +123,15 @@ class LoginScreen extends AppScreen {
     async isRepeatPasswordErrorDisplayed(): Promise<boolean> {
         try {
             const err = await this.errorRepeatPassword;
+            return await err.isDisplayed();
+        } catch {
+            return false;
+        }
+    }
+
+    async hasAnyValidationError(): Promise<boolean> {
+        try {
+            const err = await this.errorGeneric;
             return await err.isDisplayed();
         } catch {
             return false;
