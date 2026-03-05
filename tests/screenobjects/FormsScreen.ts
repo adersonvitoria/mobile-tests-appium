@@ -68,7 +68,7 @@ class FormsScreen extends AppScreen {
             const okBtn = await this.dialogOkButton;
             await okBtn.waitForDisplayed({ timeout: 3000 });
             await okBtn.click();
-            await driver.pause(500);
+            await okBtn.waitForDisplayed({ timeout: 2000, reverse: true });
         } catch {
             // No dialog to dismiss
         }

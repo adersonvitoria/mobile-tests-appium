@@ -3,7 +3,7 @@ class TabBar {
         const tab = await $(`~${tabName}`);
         await tab.waitForExist({ timeout: 15000 });
         await tab.click();
-        await driver.pause(1000);
+        await tab.waitForDisplayed({ timeout: 5000 });
     }
 
     async openHome(): Promise<void> {

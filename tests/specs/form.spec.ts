@@ -3,6 +3,10 @@ import TabBar from '../screenobjects/components/TabBar';
 import FormsScreen from '../screenobjects/FormsScreen';
 import LoginScreen from '../screenobjects/LoginScreen';
 
+function uniqueEmail(): string {
+    return `user.${Date.now()}@test.com`;
+}
+
 describe('Tarefa 2: Preenchimento de Formulário e Envio de Dados', () => {
 
     describe('Formulário de Inputs (tela Forms)', () => {
@@ -116,11 +120,8 @@ describe('Tarefa 2: Preenchimento de Formulário e Envio de Dados', () => {
             allure.addSeverity('blocker');
             allure.addDescription('Preenche email, senha e confirmação de senha no formulário de cadastro');
 
-            await LoginScreen.signUp(
-                'novo.usuario@email.com',
-                'SenhaForte123!',
-                'SenhaForte123!'
-            );
+            const email = uniqueEmail();
+            await LoginScreen.signUp(email, 'SenhaForte123!', 'SenhaForte123!');
 
             await LoginScreen.waitForSuccessDialog();
             expect(await LoginScreen.isSuccessDialogDisplayed()).toBe(true);
@@ -134,14 +135,11 @@ describe('Tarefa 2: Preenchimento de Formulário e Envio de Dados', () => {
             allure.addSeverity('critical');
             allure.addDescription('Verifica mensagem de erro quando senha e confirmação são diferentes');
 
-            await LoginScreen.signUp(
-                'usuario@email.com',
-                'SenhaForte123!',
-                'SenhaDiferente456!'
-            );
+            const email = uniqueEmail();
+            await LoginScreen.signUp(email, 'SenhaForte123!', 'SenhaDiferente456!');
 
-            await driver.pause(2000);
-            expect(true).toBe(true);
+            await LoginScreen.waitForRepeatPasswordError();
+            expect(await LoginScreen.isRepeatPasswordErrorDisplayed()).toBe(true);
         });
 
         it('deve exibir erro com email inválido no cadastro', async () => {
@@ -151,14 +149,10 @@ describe('Tarefa 2: Preenchimento de Formulário e Envio de Dados', () => {
             allure.addSeverity('normal');
             allure.addDescription('Verifica validação de formato de email no formulário de cadastro');
 
-            await LoginScreen.signUp(
-                'email-invalido',
-                'SenhaForte123!',
-                'SenhaForte123!'
-            );
+            await LoginScreen.signUp('email-invalido', 'SenhaForte123!', 'SenhaForte123!');
 
-            await driver.pause(2000);
-            expect(true).toBe(true);
+            await LoginScreen.waitForEmailError();
+            expect(await LoginScreen.isEmailErrorDisplayed()).toBe(true);
         });
 
         it('deve exibir erro com senha fraca no cadastro', async () => {
@@ -168,14 +162,11 @@ describe('Tarefa 2: Preenchimento de Formulário e Envio de Dados', () => {
             allure.addSeverity('normal');
             allure.addDescription('Verifica validação de senha curta no formulário de cadastro');
 
-            await LoginScreen.signUp(
-                'usuario@email.com',
-                '123',
-                '123'
-            );
+            const email = uniqueEmail();
+            await LoginScreen.signUp(email, '123', '123');
 
-            await driver.pause(2000);
-            expect(true).toBe(true);
+            await LoginScreen.waitForPasswordError();
+            expect(await LoginScreen.isPasswordErrorDisplayed()).toBe(true);
         });
     });
 });

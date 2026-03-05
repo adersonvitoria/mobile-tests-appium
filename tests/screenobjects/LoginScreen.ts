@@ -17,6 +17,10 @@ class LoginScreen extends AppScreen {
     get dialogMessage() { return $('android=new UiSelector().resourceId("android:id/message")'); }
     get dialogOkButton() { return $('android=new UiSelector().resourceId("android:id/button1")'); }
 
+    get errorEmail() { return $('android=new UiSelector().textContains("valid email")'); }
+    get errorPassword() { return $('android=new UiSelector().textContains("8 characters")'); }
+    get errorRepeatPassword() { return $('android=new UiSelector().textContains("same password")'); }
+
     async login(email: string, password: string): Promise<void> {
         const emailField = await this.inputEmail;
         await emailField.waitForDisplayed({ timeout: 10000 });
@@ -80,6 +84,48 @@ class LoginScreen extends AppScreen {
     async getDialogMessage(): Promise<string> {
         const msg = await this.dialogMessage;
         return msg.getText();
+    }
+
+    async waitForEmailError(): Promise<void> {
+        const err = await this.errorEmail;
+        await err.waitForDisplayed({ timeout: 10000 });
+    }
+
+    async isEmailErrorDisplayed(): Promise<boolean> {
+        try {
+            const err = await this.errorEmail;
+            return await err.isDisplayed();
+        } catch {
+            return false;
+        }
+    }
+
+    async waitForPasswordError(): Promise<void> {
+        const err = await this.errorPassword;
+        await err.waitForDisplayed({ timeout: 10000 });
+    }
+
+    async isPasswordErrorDisplayed(): Promise<boolean> {
+        try {
+            const err = await this.errorPassword;
+            return await err.isDisplayed();
+        } catch {
+            return false;
+        }
+    }
+
+    async waitForRepeatPasswordError(): Promise<void> {
+        const err = await this.errorRepeatPassword;
+        await err.waitForDisplayed({ timeout: 10000 });
+    }
+
+    async isRepeatPasswordErrorDisplayed(): Promise<boolean> {
+        try {
+            const err = await this.errorRepeatPassword;
+            return await err.isDisplayed();
+        } catch {
+            return false;
+        }
     }
 }
 

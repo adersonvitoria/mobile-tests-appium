@@ -46,15 +46,8 @@ describe('Tarefa 1: Login, Navegação e Validação', () => {
             const loginBtn = await $('~button-LOGIN');
             await loginBtn.click();
 
-            await driver.pause(2000);
-
-            const dialogOk = await $('android=new UiSelector().resourceId("android:id/button1")');
-            const hasDialog = await dialogOk.isDisplayed().catch(() => false);
-            if (hasDialog) {
-                await dialogOk.click();
-            }
-
-            expect(true).toBe(true);
+            await LoginScreen.waitForEmailError();
+            expect(await LoginScreen.isEmailErrorDisplayed()).toBe(true);
         });
 
         it('deve exibir erro ao tentar login com campos vazios', async () => {
@@ -68,8 +61,9 @@ describe('Tarefa 1: Login, Navegação e Validação', () => {
             await loginBtn.waitForDisplayed({ timeout: 5000 });
             await loginBtn.click();
 
-            await driver.pause(2000);
-            expect(true).toBe(true);
+            await LoginScreen.waitForEmailError();
+            expect(await LoginScreen.isEmailErrorDisplayed()).toBe(true);
+            expect(await LoginScreen.isPasswordErrorDisplayed()).toBe(true);
         });
     });
 
